@@ -1,0 +1,160 @@
+
+1. Find out the PG-13 rated comedy movies. DO NOT use the film_list table.
+
+SELECT f.film_id, f.title, f.rating, c.name, c.category_id
+FROM film f
+JOIN film_category fc ON f.film_id = fc.film_id
+JOIN category c ON fc.category_id = c.category_id
+WHERE c.name = 'Comedy'
+AND f.rating = 'PG-13';
+
++---------+-------------------------+--------+--------+-------------+
+| film_id | title                   | rating | name   | category_id |
++---------+-------------------------+--------+--------+-------------+
+|       7 | AIRPLANE SIERRA         | PG-13  | Comedy |           5 |
+|      28 | ANTHEM LUKE             | PG-13  | Comedy |           5 |
+|     324 | FLINTSTONES HAPPINESS   | PG-13  | Comedy |           5 |
+|     335 | FREEDOM CLEOPATRA       | PG-13  | Comedy |           5 |
+|     385 | GROUNDHOG UNCUT         | PG-13  | Comedy |           5 |
+|     502 | KNOCK WARLOCK           | PG-13  | Comedy |           5 |
+|     657 | PARADISE SABRINA        | PG-13  | Comedy |           5 |
+|     672 | PERFECT GROOVE          | PG-13  | Comedy |           5 |
+|     754 | RUSHMORE MERMAID        | PG-13  | Comedy |           5 |
+|     756 | SADDLE ANTITRUST        | PG-13  | Comedy |           5 |
+|     857 | STRICTLY SCARFACE       | PG-13  | Comedy |           5 |
+|     905 | TRAINSPOTTING STRANGERS | PG-13  | Comedy |           5 |
++---------+-------------------------+--------+--------+-------------+
+12 rows in set (0.01 sec)
+
+-----------------------------------------------------------------------------------------------
+
+2. Find out the top 3 rented horror movies.
+
+SELECT f.title AS film_id, count( f.title ) AS films
+FROM film f
+JOIN inventory i ON f.film_id = i.film_id
+JOIN rental r ON i.inventory_id = r.inventory_id
+JOIN film_category fc ON f.film_id = fc.film_id
+JOIN category c ON fc.category_id = c.category_id
+WHERE c.name = 'horror'
+GROUP BY f.title
+ORDER BY count( f.title ) DESC
+LIMIT 3 ;
+
++--------------+-------+
+| film_id      | films |
++--------------+-------+
+| PULP BEVERLY |    30 |
+| FAMILY SWEET |    29 |
+| SWARM GOLD   |    27 |
++--------------+-------+
+3 rows in set (0.01 sec)
+
+-----------------------------------------------------------------------------
+3. Find out the list of customers from India who have rented sports movies.
+
+SELECT DISTINCT c.first_name, c.last_name, cl.country, fl.category
+FROM customer c
+JOIN rental r ON c.customer_id = r.customer_id
+JOIN inventory i ON r.inventory_id = i.inventory_id
+JOIN film_list fl ON i.film_id = fl.FID
+JOIN customer_list cl ON c.customer_id = cl.ID
+WHERE cl.country = 'India'
+AND fl.category = 'Sports';
+
++------------+-------------+---------+----------+
+| first_name | last_name   | country | category |
++------------+-------------+---------+----------+
+| ADAM       | GOOCH       | India   | Sports   |
+| SHERRI     | RHODES      | India   | Sports   |
+| ANNETTE    | OLSON       | India   | Sports   |
+| ARLENE     | HARVEY      | India   | Sports   |
+| CHRISTIAN  | JUNG        | India   | Sports   |
+| CARLOS     | COUGHLIN    | India   | Sports   |
+| TONYA      | CHAPMAN     | India   | Sports   |
+| HELEN      | HARRIS      | India   | Sports   |
+| TIM        | CARY        | India   | Sports   |
+| SALLY      | PIERCE      | India   | Sports   |
+| BERNARD    | COLBY       | India   | Sports   |
+| JOSEPHINE  | GOMEZ       | India   | Sports   |
+| LAURIE     | LAWRENCE    | India   | Sports   |
+| EDITH      | MCDONALD    | India   | Sports   |
+| WAYNE      | TRUONG      | India   | Sports   |
+| HOLLY      | FOX         | India   | Sports   |
+| LENA       | JENSEN      | India   | Sports   |
+| ALLEN      | BUTTERFIELD | India   | Sports   |
+| ANITA      | MORALES     | India   | Sports   |
+| MILDRED    | BAILEY      | India   | Sports   |
+| AMY        | LOPEZ       | India   | Sports   |
+| PEARL      | GARZA       | India   | Sports   |
+| NAOMI      | JENNINGS    | India   | Sports   |
+| CHAD       | CARBONE     | India   | Sports   |
+| PENNY      | NEAL        | India   | Sports   |
+| STEVEN     | CURLEY      | India   | Sports   |
+| CYNTHIA    | YOUNG       | India   | Sports   |
+| CHERYL     | MURPHY      | India   | Sports   |
+| NINA       | SOTO        | India   | Sports   |
+| JOHN       | FARNSWORTH  | India   | Sports   |
+| PAULA      | BRYANT      | India   | Sports   |
+| RAMONA     | HALE        | India   | Sports   |
+| LEE        | HAWKS       | India   | Sports   |
+| JUANITA    | MASON       | India   | Sports   |
+| BRADLEY    | MOTLEY      | India   | Sports   |
+| LORI       | WOOD        | India   | Sports   |
+| DWAYNE     | OLVERA      | India   | Sports   |
+| JOSHUA     | MARK        | India   | Sports   |
+| SAMUEL     | MARLOW      | India   | Sports   |
+| GERALD     | FULTZ       | India   | Sports   |
+| NICOLE     | PETERSON    | India   | Sports   |
+| BRETT      | CORNWELL    | India   | Sports   |
+| BEATRICE   | ARNOLD      | India   | Sports   |
+| THEODORE   | CULP        | India   | Sports   |
+| GEORGIA    | JACOBS      | India   | Sports   |
+| MIKE       | WAY         | India   | Sports   |
+| SHANNON    | FREEMAN     | India   | Sports   |
+| MILTON     | HOWLAND     | India   | Sports   |
+| NANCY      | THOMAS      | India   | Sports   |
++------------+-------------+---------+----------+
+49 rows in set (0.06 sec)
+
+-------------------------------------------------------------------------------
+4. Find out the list of customers from Canada who have rented “NICK WAHLBERG” movies.
+
+SELECT DISTINCT c.first_name, c.last_name, cl.country
+FROM customer c
+JOIN rental r ON c.customer_id = r.customer_id
+JOIN inventory i ON r.inventory_id = i.inventory_id
+JOIN film_actor fa ON i.film_id = fa.film_id
+JOIN actor a ON fa.actor_id = a.actor_id
+JOIN customer_list cl ON c.customer_id = cl.ID
+WHERE cl.country = 'Canada'
+AND a.first_name = 'NICK'
+AND a.last_name = 'WAHLBERG';
+
+
++------------+-----------+---------+
+| first_name | last_name | country |
++------------+-----------+---------+
+| LORETTA    | CARPENTER | Canada  |
+| DARRELL    | POWER     | Canada  |
++------------+-----------+---------+
+2 rows in set (0.02 sec)
+
+---------------------------------------------------------------------------
+5. Find out the number of movies in which “SEAN WILLIAMS” acted.
+
+SELECT a.first_name AS first_name, a.last_name AS last_name, count( a.actor_id ) AS Total_films
+FROM actor a
+JOIN film_actor fa ON a.actor_id = fa.actor_id
+JOIN film f ON fa.film_id = f.film_id
+WHERE a.first_name = 'SEAN'
+AND a.last_name = 'WILLIAMS';
+
++------------+-----------+-------------+
+| first_name | last_name | Total_films |
++------------+-----------+-------------+
+| SEAN       | WILLIAMS  |          26 |
++------------+-----------+-------------+
+1 row in set (0.01 sec)
+
+
